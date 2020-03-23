@@ -17,9 +17,8 @@
     (() => {
         // ログ出力全体像
         var viewer = document.createElement('div');
-        var viewer_css = 'position:fixed; left:0; z-index:310; float:left; overflow:auto; background:rgba(255,255,255,0.7);';
-        // ＊スマホ対応として「画面下に数行くらい」に移動
-        viewer_css += ' bottom:0; width:100%; min-width:100%; height:15rem;';
+        // ページ末尾に追加枠…のような感じで
+        var viewer_css = 'overflow:auto; background:#ffffff; width:100%; min-width:100%; height:15rem;';
         viewer_css += ' border-top:3px double #909090;';
         viewer.setAttribute('style', viewer_css);
         viewer.setAttribute('id', viewer_id + '_wrap');
@@ -74,7 +73,7 @@
         // ログを書く
         let val = GetValues($div);
         if(prev !== val.time) {
-            let p = u('<p>').attr('style', 'border-bottom:1px dashed #c0c0c0; padding:0.8rem 0.5rem; background:rgba(255,255,255,0.8);').text(val.text);
+            let p = u('<p>').attr('style', 'border-bottom:1px dashed #c0c0c0; padding:0.8rem 0.5rem;').text(val.text);
             $view.prepend(p);
             prev = val.time;
         }
