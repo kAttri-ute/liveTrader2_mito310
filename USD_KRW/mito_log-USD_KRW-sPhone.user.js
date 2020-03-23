@@ -4,7 +4,7 @@
 // @version      0.0
 // @description  USD/KRW autologger...?
 // @author       Trader@Live!
-// @match        https://m.jp.investing.com/currencies/usd-krw*-chart
+// @match        https://m.jp.investing.com/currencies/usd-krw*
 // @require      https://cdn.jsdelivr.net/npm/umbrellajs
 // @run-at       document-end
 // @grant        none
@@ -35,7 +35,8 @@
         viewer.appendChild(btn);
         viewer.appendChild(document.createElement('hr'));
         viewer.appendChild(logList);
-        document.body.appendChild(viewer);
+        var append = document.getElementsByClassName('pairData')[0].parentNode;
+        append.appendChild(viewer);
     })();
 
     // 以下、https://umbrellajs.com/ に感謝
