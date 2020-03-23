@@ -13,15 +13,15 @@
 (function() {
     'use strict';
 
+    var isLarge = (document.body.clientWidth > 1550);
     var viewer_id = 'mito_log';
     (() => {
-        var isLarge = (document.body.clientWidth > 1500);
         // ログ出力全体像
         var viewer = document.createElement('div');
         var viewer_css = 'position:fixed; top:0; left:0; z-index:310; float:left; width:20rem; height:100%; min-height:100%; overflow:auto; background:rgba(255,255,255,0.7);';
         if (!isLarge) {
-            // 画面幅1500px未満は「値とチャートの間」あたり
-            viewer_css = 'height:15rem; overflow:auto; border:double #c0c0c0; border-width:3px 0;';
+            // 画面幅が小さい場合は「値とチャートの間」あたり
+            viewer_css = 'height:15rem; overflow:auto; border:3px double #c0c0c0;';
         }
         viewer.setAttribute('id', viewer_id + '_wrap');
         viewer.setAttribute('style', viewer_css);
@@ -40,7 +40,7 @@
         if (isLarge) {
             document.body.appendChild(viewer);
         } else {
-            // 画面幅1500px未満は「値とチャートの間」あたり
+            // 画面幅が小さい場合は「値とチャートの間」あたり
             let append = document.getElementById('quotes_summary_current_data').parentNode;
             append.appendChild(viewer);
         }
@@ -79,7 +79,13 @@
         // ログを書く
         let val = GetValues($div);
         if(prev !== val.time) {
-            let p = u('<p>').attr('style', 'border-bottom:1px dashed #c0c0c0; padding:1rem 0.5rem; background:rgba(255,255,255,0.8);').text(val.text);
+            let p_css = 'border-bottom:1px dashed #c0c0c0; padding:';
+            if (isLarge) {
+                p_css += '1rem 0.5rem; background:rgba(255,255,255,0.8);';
+            } else {
+                p_css += '0.5rem;';
+            }
+            let p = u('<p>').attr('style', p_css).text(val.text);
             $view.prepend(p);
             prev = val.time;
         }
