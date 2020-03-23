@@ -80,11 +80,7 @@
         let val = GetValues($div);
         if(prev !== val.time) {
             let p_css = 'border-bottom:1px dashed #c0c0c0; padding:';
-            if (isLarge) {
-                p_css += '1rem 0.5rem; background:rgba(255,255,255,0.8);';
-            } else {
-                p_css += '0.5rem;';
-            }
+            p_css += (isLarge ? '1rem 0.5rem; background:rgba(255,255,255,0.8);': '0.5rem;');
             let p = u('<p>').attr('style', p_css).text(val.text);
             $view.prepend(p);
             prev = val.time;
