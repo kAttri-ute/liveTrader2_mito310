@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         mito_log[USD/KRW]
 // @namespace    https://jp.investing.com/currencies/usd-krw-chart
-// @version      0.1
+// @version      0.1.1
 // @description  USD/KRW autologger...?
 // @author       Trader@Live!
 // @match        https://jp.investing.com/currencies/usd-krw*-chart
@@ -15,9 +15,14 @@
 
     var viewer_id = 'mito_log';
     (() => {
+        var isLarge = (document.body.clientWidth > 1500);
         // ログ出力全体像
         var viewer = document.createElement('div');
         var viewer_css = 'position:fixed; top:0; left:0; z-index:310; float:left; width:20rem; height:100%; min-height:100%; overflow:auto; background:rgba(255,255,255,0.7);';
+        if (!isLarge) {
+            // 画面幅1500px未満は「値とチャートの間」あたり
+            viewer_css = 'height:15rem; overflow:auto; border:double #c0c0c0; border-width:3px 0;';
+        }
         viewer.setAttribute('id', viewer_id + '_wrap');
         viewer.setAttribute('style', viewer_css);
         // 一時停止ボタン
@@ -32,7 +37,13 @@
         viewer.appendChild(btn);
         viewer.appendChild(document.createElement('hr'));
         viewer.appendChild(logList);
-        document.body.appendChild(viewer);
+        if (isLarge) {
+            document.body.appendChild(viewer);
+        } else {
+            // 画面幅1500px未満は「値とチャートの間」あたり
+            let append = document.getElementById('quotes_summary_current_data').parentNode;
+            append.appendChild(viewer);
+        }
     })();
 
     // 以下、https://umbrellajs.com/ に感謝
