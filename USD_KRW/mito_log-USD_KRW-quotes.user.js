@@ -1,17 +1,20 @@
 // ==UserScript==
 // @name         mito_log[USD/KRW]by-quotes
 // @namespace    https://quotes.ino.com/chart/?s=FOREX_USDKRW
-// @version      0.0
+// @version      0.0.1
 // @description  USD/KRW autologger...?
 // @author       Trader@Live!
 // @match        https://quotes.ino.com/chart/?s=FOREX_USDKRW*
+// @run-at       document-end
 // @grant        none
 // ==/UserScript==
 
 (function() {
     'use strict';
 
-    // 日本時間にする
+    /**
+     * 日本時間にする
+     **/
     var DateToJST = (function() {
         // アメリカ東部タイムゾーン(EST:標準時/ EDT:夏時間)
         const TZ = { EST: 14, EDT: 13, JST: 0, UTC: 9 };
@@ -37,7 +40,9 @@
         return _dateToJST;
     })();
 
-    // リロード対策にSessionStorage
+    /**
+     * リロード対策にSessionStorage
+     **/
     var SesStoIO = (function() {
         let s = sessionStorage;
         let k = 'quotes';
@@ -60,13 +65,24 @@
         return _sesStoIO;
     })();
 
-    // ---
-    let tz = document.querySelector('.container-fluid > .page-timestamp').textContent.trim().split(' ').reverse()[0];
-    var toJST = new DateToJST(tz);
+    // ログ出力の枠をセット
     var storage = new SesStoIO();
     let $wrap = document.getElementById('quote-above-chart-component');
-    // ---
     let $content = document.createElement('div');
+    (() => {
+        $content.setAttribute('id', 'mito-log');
+        $content.setAttribute('style', 'border:3px double #c0c0c0; height:8rem; overflow:auto; font-family:monospace; font-size:110%;');
+        $wrap.appendChild($content);
+        // 過去ログを画面に反映
+        let logs = storage.getAll();
+        if(0 < logs.length) {
+            logs.forEach((val, i) => {
+                if(i == 0) prev = val.d;
+                let _p = GetP(val.v);
+                $content.appendChild(_p);
+            });
+        }
+    })();
     var prev = '---';
     /**
      * ログ要素をつくる
@@ -82,20 +98,9 @@
         }
         return result;
     };
-    (() => {
-        $content.setAttribute('id', 'mito-log');
-        $content.setAttribute('style', 'border:3px double #c0c0c0; height:8rem; overflow:auto; font-family:monospace; font-size:110%;');
-        $wrap.appendChild($content);
-        // 過去ログを画面に反映
-        let logs = storage.getAll();
-        if(0 < logs.length) {
-            logs.forEach((val, i) => {
-                if(i == 0) prev = val.d;
-                let _p = GetP(val.v);
-                $content.appendChild(_p);
-            });
-        }
-    })();
+    /**
+     * 値の取得+ログ出力
+     **/
     function DateChange() {
         var price = $wrap.querySelector('p.quote-price').textContent;
         var dt = $wrap.querySelector('p.quote-date > span').textContent;
@@ -113,5 +118,18 @@
     }
 
     var inv_id;
-    inv_id = setInterval(DateChange, 4500);
+    let tz_id;
+    var toJST;
+    let tz;
+    // タイムゾーン取得できたらログ取り開始
+    tz_id = setInterval(() => {
+        tz = document.getElementById('page-timestamp').textContent;
+        if (tz != undefined) {
+            tz = tz.trim().split(' ').reverse()[0];
+            toJST = new DateToJST(tz);
+            clearInterval(tz_id);
+            inv_id = setInterval(DateChange, 3200);
+        }
+    }, 500);
+
 })();
