@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         mito_log[USD/KRW]by-quotes
 // @namespace    https://quotes.ino.com/chart/?s=FOREX_USDKRW
-// @version      0.0.1
+// @version      0.0.2
 // @description  USD/KRW autologger...?
 // @author       Trader@Live!
 // @match        https://quotes.ino.com/chart/?s=FOREX_USDKRW*
@@ -65,10 +65,24 @@
         return _sesStoIO;
     })();
 
-    // ログ出力の枠をセット
     var storage = new SesStoIO();
     let $wrap = document.getElementById('quote-above-chart-component');
     let $content = document.createElement('div');
+    /**
+     * ログ要素をつくる
+     */
+    var GetP = function(price, dt) {
+        let result = document.createElement('p');
+        result.setAttribute('style', 'border-bottom:1px dashed #c0c0c0; margin-bottom:0; padding:0.4rem 0.5rem;');
+        result.appendChild(document.createTextNode(price));
+        if(dt !== undefined) {
+            result.appendChild(document.createTextNode(' '));
+            result.appendChild(document.createTextNode(toJST.GetDate(dt)));
+            result.appendChild(document.createTextNode(' JST,15min delay'));
+        }
+        return result;
+    };
+    // ログ出力の枠をセット
     (() => {
         $content.setAttribute('id', 'mito-log');
         $content.setAttribute('style', 'border:3px double #c0c0c0; height:8rem; overflow:auto; font-family:monospace; font-size:110%;');
@@ -84,20 +98,6 @@
         }
     })();
     var prev = '---';
-    /**
-     * ログ要素をつくる
-     */
-    var GetP = function(price, dt) {
-        let result = document.createElement('p');
-        result.setAttribute('style', 'border-bottom:1px dashed #c0c0c0; margin-bottom:0; padding:0.4rem 0.5rem;');
-        result.appendChild(document.createTextNode(price));
-        if(dt !== undefined) {
-            result.appendChild(document.createTextNode(' '));
-            result.appendChild(document.createTextNode(toJST.GetDate(dt)));
-            result.appendChild(document.createTextNode(' JST,15min delay'));
-        }
-        return result;
-    };
     /**
      * 値の取得+ログ出力
      **/
